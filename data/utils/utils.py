@@ -36,3 +36,12 @@ def defineTrimestre(item):
     trimestre = 4
   return trimestre
 
+def defineStatus(item):
+  s = ''
+  if item.status == 'Silver':
+    s = 'S'
+  elif item.status == 'Gold': 
+    s = 'G'
+  elif item.status == 'Platinum':
+    s = 'P'
+  return s

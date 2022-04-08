@@ -3,7 +3,7 @@ import sqlalchemy as sa
 import timeit
 from ETL.extract import ExtractClientes,ExtractItensVenda,ExtractProdutos,ExtractVendas,ExtractVendedores
 from entities.dimensional import clientesDM,gestaoFT,itens_vendaDM,produtoDM,tempoDM,vendaDM,vendedorDM
-from utils.utils import defineClass,defineNivel,defineTrimestre
+from utils.utils import defineClass,defineNivel,defineTrimestre,defineStatus
 
 def TransformaClientes(engineDM):
     listaDW = []
@@ -13,7 +13,7 @@ def TransformaClientes(engineDM):
     lista_op =  ExtractClientes(engineDM)
         
     for i in lista_op:
-       listaDW.append(clientesDM.ClientesDM(i.idcliente, i.cliente, i.estado, i.sexo, i.status))
+       listaDW.append(clientesDM.ClientesDM(i.idcliente, i.cliente, i.estado, i.sexo, defineStatus(i)))
 
     print(listaDW[2].to_string())        
     end = timeit.default_timer()
@@ -68,7 +68,7 @@ def TransformaItensVenda(engineDM):
     lista_op =  ExtractItensVenda(engineDM)
         
     for i in lista_op:
-       listaDW.append(itens_vendaDM.ItensVendaDM(i.iditensvenda, i.idproduto, i.idvenda,  
+       listaDW.append(itens_vendaDM.ItensVendaDM( i.idproduto, i.idvenda,  
                                                   i.valorunitario, i.desconto))
 
     print(listaDW[2].to_string())    
@@ -123,7 +123,7 @@ def TransformaGestao(engineDM):
     print("transformação de Gestao")
     start = timeit.default_timer()
     
-    tempo_id = 0
+    tempo_id, qtd_vendas = 0, 0
     venda = ExtractVendas(engineDM)
     itens_venda = ExtractItensVenda(engineDM)
 
@@ -131,9 +131,10 @@ def TransformaGestao(engineDM):
     for i in venda:
         tempo_id += 1
         for j in itens_venda:
-            listaDW.append(gestaoFT.GestaoFT(tempo_id, i.idvenda, 
-                                        j.iditensvenda, i.idvenda,
-                                        j.idproduto, sum(j.valortotal)))
+            qtd_vendas += j.quantidade
+            listaDW.append(gestaoFT.GestaoFT(j.idproduto, i.idvenda, 
+                                        tempo_id, i.idvenda,
+                                        j.idproduto, qtd_vendas))
 
     print(listaDW[2].to_string())    
     end = timeit.default_timer()

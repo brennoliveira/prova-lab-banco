@@ -2,7 +2,6 @@ class ItensVenda():
 
   def to_string(self):
     return {
-      "id_i_v": self.iditensvenda,
       "id_p": self.idproduto,
       "id_v": self.idvenda,
       "qtd": self.quantidade,
@@ -11,8 +10,7 @@ class ItensVenda():
       "desc": self.desconto
     }
 
-  def __init__(self, iditensvenda, idproduto, idvenda, quantidade, valorunitario, valortotal, desconto) -> None:
-      self.iditensvenda = iditensvenda
+  def __init__(self, idproduto, idvenda, quantidade, valorunitario, valortotal, desconto) -> None:
       self.idproduto = idproduto
       self.idvenda = idvenda
       self.quantidade = quantidade
